@@ -25,6 +25,15 @@ $films = allFilms(); // on recupere tous les films
 // debug($films);
 // on recupere la categorie
 
+// Supprimer un film 
+if (isset($_GET['action']) && $_GET['action'] == 'delete' && !empty($_GET['id'])) {
+    $idFilm = htmlspecialchars($_GET['id']);
+    deleteFilm($idFilm);
+    $alertmessage = alert("Film supprimé avec succès", "success");
+    $_SESSION['message'] = $alertmessage;
+    header("location:" . RACINE_SITE . "admin/films.php");
+    exit;
+}
 
 ?>
 
@@ -94,7 +103,7 @@ require_once "../inc/header.inc.php";
                         <td><?= $film['date']; ?></td>
 
 
-                        <td class="text-center"><a href=""><i class="bi bi-trash3-fill"></i></a></td>
+                        <td class="text-center"><a href="films.php?action=delete&id=<?= $film['id']; ?>" onclick="return(confirm('Êtes-vous sûr de vouloir supprimer cette categorie ?'))"><i class="bi bi-trash3-fill"></i></a></td>
                         <td class="text-center"><a href="filmForm.php?action=update&id=<?= $film['id']; ?>"><i class="bi bi-pen-fill"></i></a></td>
 
                     </tr>

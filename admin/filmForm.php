@@ -86,13 +86,22 @@ if (!empty($_POST)) {
         }
 
         // On verifie si l'image est valide
-        if (!isset($_FILES['image']) || $_FILES['image']['error'] != 0) {
-            $info .= alert("Erreur sur l'image", "danger");
+
+        if ($_FILES['image']['error'] == 4) {
+            $_FILES['image']['name'] = htmlspecialchars(trim($_POST['oldImage']));
         } else {
-            $extensions = ['jpg', 'jpeg', 'png', 'gif'];
-            $extension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-            if (!in_array($extension, $extensions)) {
-                $info .= alert("L'extension de l'image n'est pas valide", "danger");
+            if (!isset($_FILES['image']) || $_FILES['image']['error'] != 0 && $_GET['action'] != "update") {
+                $info .= alert("Erreur sur l'image", "danger");
+            } else {
+                $extensions = ['jpg', 'jpeg', 'png', 'gif'];
+                $extension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+                if (!in_array($extension, $extensions)) {
+                    $info .= alert("L'extension de l'image n'est pas valide", "danger");
+                } elseif ($_FILES['image']['size'] > 2000000) {
+                    $info .= alert("L'image est trop lourde", "danger");
+                } elseif ($_FILES['image']['size'] == 0) {
+                    $info .= alert("L'image est vide", "danger");
+                }
             }
         }
     }
@@ -110,40 +119,22 @@ if (!empty($_POST)) {
         $stock = htmlspecialchars(trim($_POST['stock']));
         $synopsis = htmlspecialchars(trim($_POST['synopsis']));
         $image = $_FILES['image']['name'];
+        $oldImage = htmlspecialchars(trim($_POST['oldImage']));
 
-        //  Traitement nom de l'image
-        $image = strtolower($image);
-        $image = str_replace(" ", "_", $image);
-
-
+        // On verifie si le film existe
         $filmExist = filmExist($title);
 
         // modification du film
         if (isset($_GET['action']) && $_GET['action'] == "update") {
             if ($filmExist) {
 
-                if ($_FILES['image']['error'] == 4) {
-                    $image = htmlspecialchars($_POST['oldImage']);
-                } else {
-                    $path = "../assets/img/films/" . $_FILES['image']['name'];
-                    move_uploaded_file($_FILES['image']['tmp_name'], $path);
-                }
-
-                // if ($_FILES['image']['error'] == 0) {
-                //     // On recupère l'ancienne image
-                //     // $film = showFilm(htmlspecialchars($_GET['id']));
-                //     // $oldImage = $film['image'];
-                //     // On supprime l'ancienne image
-                //     // unlink("../assets/img/films/" . $oldImage);
-                //     // On ajoute la nouvelle image
-
-                // } else {
-                //     $image = htmlspecialchars($_POST['oldImage']);
-                // }
-
                 $idFilm = htmlspecialchars($_GET['id']);
+                // on déplace l'image
+                $path = "../assets/img/films/" . $image;
+                move_uploaded_file($_FILES['image']['tmp_name'], $path);
+                // on modifie le film
                 updateFilm($title, $director, $actors, $ageLimit, $categories, $duration, $date, $price, $stock, $synopsis, $image, $idFilm);
-                $alertMessage .= alert("Film modifié avec succès", "success");
+                $alertMessage = alert("Film modifié avec succès", "success");
                 $_SESSION['message'] = $alertMessage;
                 header('location:films.php');
                 exit;
@@ -153,18 +144,14 @@ if (!empty($_POST)) {
         } elseif ($filmExist) {
             $info .= alert("Le film existe déjà", "danger");
         } else {
-            if ($filmExist) {
-                $info .= alert("Le film existe déjà", "danger");
-            } else {
-                // On ajoute l'image
-                $path = "../assets/img/films/" . $image;
-                move_uploaded_file($_FILES['image']['tmp_name'], $path);
-                // On ajoute le film
-                addFilm($title, $director, $actors, $ageLimit, $categories, $duration, $date, $price, $stock, $synopsis, $image);
+            // On ajoute l'image
+            $path = "../assets/img/films/" . $image;
+            move_uploaded_file($_FILES['image']['tmp_name'], $path);
+            // On ajoute le film
+            addFilm($title, $director, $actors, $ageLimit, $categories, $duration, $date, $price, $stock, $synopsis, $image);
 
 
-                $info .= alert("Film ajouté avec succès", "success");
-            }
+            $info .= alert("Film ajouté avec succès", "success");
         }
     }
 }
@@ -187,7 +174,7 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
             $price = $film['price'];
             $stock = $film['stock'];
             $synopsis = $film['synopsis'];
-            $image = $film['image'];
+            $exisitingImage = $film['image'];
             $submit = "Modifier un film";
         }
     }
@@ -224,7 +211,7 @@ require_once "../inc/header.inc.php";
                 <label for="image" class="text-white">Affiche</label>
                 <br>
                 <input type="file" name="image" id="image">
-                <input class="hidden" name="oldImage" value="<?= $image ?? "" ?>"></input>
+                <input class="hidden" name="oldImage" value="<?= $exisitingImage ?? "not_existing_image" ?>"></input>
             </div>
         </div>
         <div class="row">
@@ -311,7 +298,7 @@ require_once "../inc/header.inc.php";
         <div class="row">
             <div class="col-12">
                 <label for="synopsis" class="text-white">Synopsis</label>
-                <textarea type="text" class="form-control" id="synopsis" name="synopsis" rows="10"><?= html_entity_decode($synopsis) ?? "" ?></textarea>
+                <textarea type="text" class="form-control" id="synopsis" name="synopsis" rows="10"><?= $synopsis ?? "" ?></textarea>
             </div>
         </div>
 

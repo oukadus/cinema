@@ -51,7 +51,7 @@
                                 <?php $categories = allCategories('name');
                                 foreach ($categories as $category) : ?>
 
-                                    <li><a class="dropdown-item fs-4" href=""><?= html_entity_decode($category['name']); ?></a></li>
+                                    <li><a class="dropdown-item fs-4" href="index.php?action=showCategory&id=<?= $category['id']; ?>"><?= html_entity_decode($category['name']); ?></a></li>
 
                                 <?php endforeach; ?>
                             </ul>
@@ -116,7 +116,7 @@
 
 
                         <li class="nav-item">
-                            <a class="nav-link" href=""><i class="bi bi-cart fs-2"><sup></sup></i></a>
+                            <a class="nav-link" href="<?= RACINE_SITE; ?>store/cart.php"><i class="bi bi-cart fs-2"><sup></sup></i></a>
                         </li>
 
 

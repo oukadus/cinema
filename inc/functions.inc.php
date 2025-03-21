@@ -184,6 +184,47 @@ function foreignKey(string $tableL, string $fieldL, string $tableF, string $fiel
     $request = $cnx->exec($sql);
 }
 
+// créer la table orders 
+function createTableOrders(): void
+{
+    $cnx = connection_bdd();
+    $sql = "CREATE TABLE IF NOT EXISTS orders 
+    (
+    id INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    user_id INT(11) NOT NULL,
+    price FLOAT NOT NULL,
+    created_at DATE NOT NULL,
+    is_paid ENUM('1', '0')  DEFAULT '0'
+    )";
+
+    $request = $cnx->exec($sql);
+}
+
+function createTableOderDetails(): void
+{
+    $cnx = connection_bdd();
+    $sql = "CREATE TABLE IF NOT EXISTS order_details 
+    (
+    id INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    order_id INT(11) NOT NULL,
+    film_id INT(11) NOT NULL,
+    quantity INT(11) NOT NULL,
+    price FLOAT NOT NULL
+    )";
+
+    $request = $cnx->exec($sql);
+}
+
+// createTableOderDetails();
+
+// foreignKey('order_details', 'order_id', 'orders', 'id');
+// foreignKey('order_details', 'film_id', 'films', 'id');
+
+// createTableOrders();
+// foreignKey('orders', 'user_id', 'users', 'id');
+
+
+
 // Execution des requêtes de création de table 
 // createTableCategories();
 // createTableFilms();
@@ -485,10 +526,8 @@ function filmExist(string $title): mixed
     $cnx = connection_bdd();
     $sql = "SELECT * FROM films WHERE title = :title";
     $request = $cnx->prepare($sql);
-    $request->execute(array(
-        ':title' => $title
-    ));
-
+    $request->bindValue(':title', $title, PDO::PARAM_STR);
+    $request->execute();
     $result = $request->fetch();
     return $result;
 }
@@ -537,9 +576,8 @@ function showFilm(int $id): mixed
     $cnx = connection_bdd();
     $sql = "SELECT * FROM films WHERE id = :id";
     $request = $cnx->prepare($sql);
-    $request->execute(array(
-        ':id' => $id
-    ));
+    $request->bindValue(':id', $id, PDO::PARAM_INT);
+    $request->execute();
 
     $result = $request->fetch();
     return $result;
@@ -548,27 +586,53 @@ function showFilm(int $id): mixed
 // modifier un film
 function updateFilm(string $title, string $director, string $actors, string $ageLimit, int $categories, string $duration, string $date, string $price, string $stock, string $synopsis, string $image, int $id): void
 {
-    $data = [
-        'title' => $title,
-        'director' => $director,
-        'actors' => $actors,
-        'ageLimit' => $ageLimit,
-        'categories' => $categories,
-        'duration' => $duration,
-        'date' => $date,
-        'price' => $price,
-        'stock' => $stock,
-        'synopsis' => $synopsis,
-        'image' => $image,
-        'id' => $id
-    ];
-
-    foreach ($data as $key => $value) {
-        $data[$key] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-    }
-
     $cnx = connection_bdd();
     $sql = "UPDATE films SET title = :title, director = :director, actors = :actors, ageLimit = :ageLimit, category_id = :categories, duration = :duration, date = :date, price = :price, stock = :stock, synopsis = :synopsis, image = :image WHERE id = :id";
     $request = $cnx->prepare($sql);
-    $request->execute($data);
+    $request->execute(array(
+        ':title' => $title,
+        ':director' => $director,
+        ':actors' => $actors,
+        ':ageLimit' => $ageLimit,
+        ':categories' => $categories,
+        ':duration' => $duration,
+        ':date' => $date,
+        ':price' => $price,
+        ':stock' => $stock,
+        ':synopsis' => $synopsis,
+        ':image' => $image,
+        ':id' => $id
+    ));
+}
+
+// effacer un film
+function deleteFilm(int $id): void
+{
+    $cnx = connection_bdd();
+    $sql = "DELETE FROM films WHERE id = :id";
+    $request = $cnx->prepare($sql);
+    $request->bindValue(':id', $id, PDO::PARAM_INT);
+    $request->execute();
+}
+
+function getLastFilms(string $order = "id"): mixed
+{
+    $cnx = connection_bdd();
+    $sql = "SELECT * FROM films ORDER BY $order LIMIT 4";
+    $request = $cnx->query($sql);
+    $result = $request->fetchAll();
+
+    return $result;
+}
+
+function getFilmsByCategory(int $id): mixed
+{
+    $cnx = connection_bdd();
+    $sql = "SELECT * FROM films WHERE category_id = :id";
+    $request = $cnx->prepare($sql);
+    $request->bindValue(':id', $id, PDO::PARAM_INT);
+    $request->execute();
+    $result = $request->fetchAll();
+
+    return $result;
 }
