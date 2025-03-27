@@ -49,7 +49,7 @@ require_once("inc/header.inc.php");
         <div class="col-12 col-xl-5 row p-5">
             <img src="<?= RACINE_SITE . "assets/img/films/" . $film['image'];  ?>" alt="Affiche du film">
             <div class="col-12 mt-5">
-                <form action="boutique/panier.php" method="post" enctype="multipart/form-data" class="w-75 m-auto row justify-content-center p-5">
+                <form action="store/cart.php" method="post" enctype="multipart/form-data" class="w-75 m-auto row justify-content-center p-5">
                     <!-- Dans le formulaire d'ajout au panier, ajoutez des champs cachés pour chaque information que vous souhaitez conserver du film -->
                     <input type="hidden" name="id_film" value="<?= $film['id']; ?>">
                     <select name="quantity" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">

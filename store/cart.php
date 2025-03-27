@@ -3,6 +3,22 @@ require_once("../inc/functions.inc.php");
 ?>
 
 <!-- CONTENU PHP DE LA PAGE -->
+<?php
+
+if (!empty($_POST)) {
+
+    // debug($_POST);
+    // debug($_SESSION);
+
+    // On récupère les informations du film
+    $id_film = htmlspecialchars($_POST['id_film']);
+    $quantity = htmlspecialchars($_POST['quantity']);
+    $film = showFilm($id_film);
+}
+
+
+
+?>
 
 
 <?php

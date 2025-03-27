@@ -5,7 +5,6 @@ $pageTitle = "- Accueil";
 switch ($_GET['action']) {
     case 'viewAll':
         $films = allFilms('title'); // on recupere tous les films
-        $nbFilms = count($films); // on compte le nombre de films
         $showButton = "Afficher les derniers films";
         $showTitle = "Tous les films";
         $showUrl = "index.php";
@@ -15,21 +14,20 @@ switch ($_GET['action']) {
         $films = getFilmsByCategory($catId);
         $category = showCategory($catId);
         // on recupere tous les films
-        $nbFilms = count($films); // on compte le nombre de films
         $showButton = "Afficher tous les films";
         $showTitle = $category['name'];
         $showUrl = "index.php?action=viewAll";
-
         break;
     default:
         $films = getLastFilms(); // on recupere tous les films
-        $nbFilms = count($films); // on compte le nombre de films
         $showButton = "Afficher tous les films";
         $showTitle = "Nos derniers films";
         $showUrl = "index.php?action=viewAll";
-
         break;
 }
+
+$nbFilms = count($films); // on compte le nombre de films
+
 ?>
 
 <!-- CONTENU PHP DE LA PAGE -->
