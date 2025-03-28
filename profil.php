@@ -31,66 +31,68 @@ require_once("inc/header.inc.php");
 ?>
 
 <!-- CONTENU HTML DE LA PAGE -->
-<div class="mx-auto p-2 row flex-column align-items-center">
-    <h2 class="text-center mb-5">Bonjour, <?= $user['pseudo']; ?> </h2>
+<main class="bg-dark">
+    <div class="mx-auto p-2 row flex-column align-items-center">
+        <h2 class="text-center mb-5">Bonjour, <?= $user['pseudo']; ?> </h2>
 
-    <?php ?>
-    <div class="cardFilm">
-        <div class="image">
-            <?php
+        <?php ?>
+        <div class="cardFilm">
+            <div class="image">
+                <?php
 
-            if ($user['civility'] === "h") {
-                echo "<img src=\"" .  RACINE_SITE . "assets/img/male.png\" alt=\"Image avatar de l'utilisateur\">";
-            } else {
-                echo "<img src=\"" .  RACINE_SITE . "assets/img/femal.png\" alt=\"Image avatar de l'utilisateur\">";
-            }
+                if ($user['civility'] === "h") {
+                    echo "<img src=\"" .  RACINE_SITE . "assets/img/male.png\" alt=\"Image avatar de l'utilisateur\">";
+                } else {
+                    echo "<img src=\"" .  RACINE_SITE . "assets/img/femal.png\" alt=\"Image avatar de l'utilisateur\">";
+                }
 
-            ?>
+                ?>
 
 
 
-            <div class="details">
-                <div class="center ">
+                <div class="details">
+                    <div class="center ">
 
-                    <table class="table">
-                        <tr>
-                            <th scope="row" class="fw-bold">Nom</th>
-                            <td><?= $user['lastName']; ?></td>
+                        <table class="table">
+                            <tr>
+                                <th scope="row" class="fw-bold">Nom</th>
+                                <td><?= $user['lastName']; ?></td>
 
-                        </tr>
-                        <tr>
-                            <th scope="row" class="fw-bold">Prenom</th>
-                            <td><?= $user['firstName']; ?></td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="fw-bold">Prenom</th>
+                                <td><?= $user['firstName']; ?></td>
 
-                        </tr>
-                        <tr>
-                            <th scope="row" class="fw-bold">Pseudo</th>
-                            <td colspan="2"><?= $user['pseudo']; ?></td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="fw-bold">Pseudo</th>
+                                <td colspan="2"><?= $user['pseudo']; ?></td>
 
-                        </tr>
-                        <tr>
-                            <th scope="row" class="fw-bold">email</th>
-                            <td colspan="2"><?= $user['email']; ?></td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="fw-bold">email</th>
+                                <td colspan="2"><?= $user['email']; ?></td>
 
-                        </tr>
-                        <tr>
-                            <th scope="row" class="fw-bold">Tel</th>
-                            <td colspan="2"><?= $user['phone']; ?></td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="fw-bold">Tel</th>
+                                <td colspan="2"><?= $user['phone']; ?></td>
 
-                        </tr>
-                        <tr>
-                            <th scope="row" class="fw-bold">Adresse</th>
-                            <td colspan="2"><?php echo $user['address'] . ", " . $user['zip'] . ". " . $user['city'] . "<br>" . $user['country']; ?></td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="fw-bold">Adresse</th>
+                                <td colspan="2"><?php echo $user['address'] . ", " . $user['zip'] . ". " . $user['city'] . "<br>" . $user['country']; ?></td>
 
-                        </tr>
+                            </tr>
 
-                    </table>
-                    <a href="profil.php?action=update&id=<?= $user['id']; ?>" class="btn mt-5">Modifier vos informations</a>
+                        </table>
+                        <a href="profil.php?action=update&id=<?= $user['id']; ?>" class="btn mt-5">Modifier vos informations</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</main>
 
 <?php
 require_once("inc/footer.inc.php");

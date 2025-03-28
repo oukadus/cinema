@@ -636,3 +636,66 @@ function getFilmsByCategory(int $id): mixed
 
     return $result;
 }
+
+
+/*
+                          ╔═════════════════════════════════════════════╗
+                          ║                                             ║
+                          ║                ORDER                        ║
+                          ║                                             ║
+                          ╚═════════════════════════════════════════════╝ 
+                          
+*/
+
+// add order 
+function addOrder(int $user_id, float $price, string $created_at, string $is_paid): ?bool
+{
+    $cnx = connection_bdd();
+    $sql = "INSERT INTO orders (user_id, price, created_at, is_paid) VALUES (:user_id, :price, :created_at, :is_paid)";
+    $request = $cnx->prepare($sql);
+    $request->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $request->bindValue(':price', $price, PDO::PARAM_STR);
+    $request->bindValue(':created_at', $created_at, PDO::PARAM_STR);
+    $request->bindValue(':is_paid', $is_paid, PDO::PARAM_STR);
+    $request->execute();
+
+    if ($request) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+// get last order
+function lastId(): array
+{
+    $pdo = connection_bdd();
+    $sql = "SELECT MAX(id_order) AS lastId FROM orders";
+    $request = $pdo->query($sql);
+    $result = $request->fetch();
+    return $result;
+}
+
+// add order details
+function addOrderDetails(int $order_id, int $film_id, int $quantity, float $price): void
+{
+    $cnx = connection_bdd();
+    $sql = "INSERT INTO order_details (order_id, film_id, quantity, price) VALUES (:order_id, :film_id, :quantity, :price)";
+    $request = $cnx->prepare($sql);
+    $request->bindValue(':order_id', $order_id, PDO::PARAM_INT);
+    $request->bindValue(':film_id', $film_id, PDO::PARAM_INT);
+    $request->bindValue(':quantity', $quantity, PDO::PARAM_INT);
+    $request->bindValue(':price', $price, PDO::PARAM_STR);
+    $request->execute();
+}
+
+// reduce stock
+function reduceStock(int $id, int $quantity): void
+{
+    $cnx = connection_bdd();
+    $sql = "UPDATE films SET stock = stock - :quantity WHERE id = :id";
+    $request = $cnx->prepare($sql);
+    $request->bindValue(':quantity', $quantity, PDO::PARAM_INT);
+    $request->bindValue(':id', $id, PDO::PARAM_INT);
+    $request->execute();
+}

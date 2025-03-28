@@ -2,11 +2,12 @@
 require_once '../inc/functions.inc.php';
 require_once '../vendor/autoload.php';
 require_once 'secrets.php';
+$pageTitle = "Paiement";
 
 \Stripe\Stripe::setApiKey($stripeSecretKey);
 header('Content-Type: application/json');
 
-$total = $_POST['total'] * 100;
+$total = is_numeric($_POST['total']) ? (int)round($_POST['total'] * 100) : 0;
 
 $YOUR_DOMAIN = RACINE_SITE;
 
@@ -23,8 +24,8 @@ $checkout_session = \Stripe\Checkout\Session::create([
         'quantity' => 1,
     ]],
     'mode' => 'payment',
-    'success_url' => $YOUR_DOMAIN . '/success.html',
-    'cancel_url' => $YOUR_DOMAIN . '/cancel.html',
+    'success_url' => $YOUR_DOMAIN . 'store/success.php?total=' . $_POST['total'],
+    'cancel_url' => $YOUR_DOMAIN . 'store/cancel.php',
 ]);
 
 header("HTTP/1.1 303 See Other");
